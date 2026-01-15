@@ -1,0 +1,26 @@
+services:
+  api:
+    build: ./api
+    container_name: api
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./api:/app
+    restart: unless-stopped
+    networks:
+      - douyin_api_network
+
+  douyin_downloader:
+    image: evil0ctal/douyin_tiktok_download_api:latest
+    container_name: douyin-downloader
+    restart: always
+    ports:
+      - "8000:80"
+    volumes:
+      - ./douyin_downloader:/crawlers/douyin/
+    networks:
+      - douyin_api_network
+
+networks:
+  douyin_api_network:
+    driver: bridge
