@@ -7,6 +7,7 @@ services:
     volumes:
       - ./douyin_downloader:/app/douyin_downloader
       - ./douyin_downloader/data:/data
+      - ./douyin_downloader/config/config.yaml:/app/crawlers/douyin/web/config.yaml
     networks:
       - douyin_api
 
