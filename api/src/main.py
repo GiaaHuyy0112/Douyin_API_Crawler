@@ -1,24 +1,10 @@
-from wsgiref import headers
-import requests
-import json
-import os
 from src.douyin_config import DouyinConfig
+from src.utils import *
 from fastapi import FastAPI
 
 app = FastAPI()
 
-@app.get("/")
-def root():
-    try:
-        msToken = create_msToken()
-        ttwid = create_ttwid()
-        a_bogus = create_abogus()
-        x_bogus = create_xbogus()
-        return {"status": 200, "msToken": msToken, "ttwid": ttwid, "a_bogus": a_bogus, "x_bogus": x_bogus}
-    except Exception as e:
-        return {"status": 500, "error": str(e)}
-    
-@app.get("/feed")
+@app.get("/update_cookies")
 def root():
     try:
         msToken = create_msToken()
@@ -26,251 +12,61 @@ def root():
         a_bogus = create_abogus()
         x_bogus = create_xbogus()
         svwebid = create_svwebid()
-
-        data = fetch_douyin_hot_search(bogus=a_bogus, mstoken=msToken, ttwid=ttwid, svwebid=svwebid)
         
+        cookies = {
+            "enter_pc_once": "1",
+            "UIFID_TEMP": "5bdad390e71fd6e6e69e3cafe6018169c2447c8bc0b8484cc0f203a274f99fdb9cf7a4d1e0b69a920c6ca4ad98060878d3b7900073919d9753d60cb2e849edf99a42cb95bb5e203d4561dcbdaa5ba50b",
+            "s_v_web_id": svwebid,
+            "hevc_supported": "true",
+            "dy_swidth": "1920",
+            "dy_sheight": "1080",
+            "is_dash_user": "1",
+            "passport_csrf_token": "372f0c75fc6a3373936632242bb9b6de",
+            "passport_csrf_token_default": "372f0c75fc6a3373936632242bb9b6de",
+            "odin_tt": "d5919a42bbe339d3c0204298655300868ba3ea167df34ba1ebb3403693c5129d941796d0f04b5a811e91949e1a075c7309b4535c4a1f166c95737704c345db9246c7441a1058a612ce0e302be54668eb",
+            "__security_mc_1_s_sdk_crypt_sdk": "15acf9ea-4304-89a6",
+            "bd_ticket_guard_client_web_domain": "2",
+            "fpk1": "U2FsdGVkX183HNZHTeoguv8v/hb45/euFbZUOwqWAAQVSivjIEFiwDMAed2pebXj2cpMKoPvFM4frCE4ou+KOg==",
+            "fpk2": "89db729cfcdc129111f017b0e7ac324a",
+            "UIFID": "5bdad390e71fd6e6e69e3cafe6018169c2447c8bc0b8484cc0f203a274f99fdb9cf7a4d1e0b69a920c6ca4ad980608788e76671ef24a5084040fdb53a9732ecf1200212c1e7826103933f21370c4cd85147e664fa82539303108b24e10c61c78d8c0d2ca2d0b88dfec4b28fbcb3330df93732eb113d2a1693459da96c31496d7ac617ff67394a29e3341caf3ab79fbf7838a1adc248fdaacbace735542dd91bf",
+            "volume_info": "%7B%22isUserMute%22%3Afalse%2C%22isMute%22%3Atrue%2C%22volume%22%3A0.5%7D",
+            "download_guide": "%223%2F20260129%2F0%22",
+            "__ac_nonce": "0697e2a8700b691bab6a0",
+            "__ac_signature": "_02B4Z6wo00f01KaQYeQAAIDAxI5looovR1ymsGVAAEDe42",
+            "device_web_cpu_core": "8",
+            "device_web_memory_size": "8",
+            "architecture": "amd64",
+            "stream_recommend_feed_params": "%22%7B%5C%22cookie_enabled%5C%22%3Atrue%2C%5C%22screen_width%5C%22%3A1920%2C%5C%22screen_height%5C%22%3A1080%2C%5C%22browser_online%5C%22%3Atrue%2C%5C%22cpu_core_num%5C%22%3A8%2C%5C%22device_memory%5C%22%3A8%2C%5C%22downlink%5C%22%3A10%2C%5C%22effective_type%5C%22%3A%5C%224g%5C%22%2C%5C%22round_trip_time%5C%22%3A50%7D%22",
+            "strategyABtestKey": "%221769876109.289%22",
+            "home_can_add_dy_2_desktop": "%221%22",
+            "bd_ticket_guard_client_data": "eyJiZC10aWNrZXQtZ3VhcmQtdmVyc2lvbiI6MiwiYmQtdGlja2V0LWd1YXJkLWl0ZXJhdGlvbi12ZXJzaW9uIjoxLCJiZC10aWNrZXQtZ3VhcmQtcmVlLXB1YmxpYy1rZXkiOiJCS2thclJ4Q0ErUzVuN0pXaVBVTXpUdS9JVUFnNHRHM0t4Q3RNMEdnc0dZMWpBQVc5dGF5UGpkWkg5U284VDJNU1ZIZy9jY0d3SVE4Ui83VWFBVVF4U3c9IiwiYmQtdGlja2V0LWd1YXJkLXdlYi12ZXJzaW9uIjoyfQ%3D%3D",
+            "bd_ticket_guard_client_data_v2": "eyJyZWVfcHVibGljX2tleSI6IkJLa2FyUnhDQStTNW43SldpUFVNelR1L0lVQWc0dEczS3hDdE0wR2dzR1kxakFBVzl0YXlQamRaSDlTbzhUMk1TVkhnL2NjR3dJUThSLzdVYUFVUXhTdz0iLCJyZXFfY29udGVudCI6InNlY190cyIsInJlcV9zaWduIjoicUhwaktNdDEzZ25Qa1NsNWhOclVrM2N0K2hHSFBXTG5nOVlMdXIvbmw5VT0iLCJzZWNfdHMiOiIjc3pRUUwzRTd2cmY0eTliZE9RQVZ6WFMzbzdWdkg5ZThaWXlDaUNwVzFRMFhLMTFCSjdRTThNRGxvUGlxIn0%3D",
+            "gulu_source_res": "eyJwX2luIjoiNjU5NTEzOWNiNWY3ZDAzY2U1YmNkZjNlM2M2MDQwZjk0N2JiNGVkYWUzZjc5N2FhNzAzZjczZDcwZjlmODQyMSJ9",
+            "sdk_source_info": "7e276470716a68645a606960273f276364697660272927676c715a6d6069756077273f276364697660272927666d776a68605a607d71606b766c6a6b5a7666776c7571273f275e58272927666a6b766a69605a696c6061273f27636469766027292762696a6764695a7364776c6467696076273f275e582729277672715a646971273f2763646976602729277f6b5a666475273f2763646976602729276d6a6e5a6b6a716c273f2763646976602729276c6b6f5a7f6367273f27636469766027292771273f2731343031343433323d3c333234272927676c715a75776a716a666a69273f2763646976602778",
+            "bit_env": "lbpmv__HuVXu610l-br78emQ2b7uKM_7B-VLTVVlwk_t95SNPvhCqmlseQqWMBM6ehEu7msSriqZNnDVS_49bfbs5KaXN9iOqxu-9WEyUeH_5t6JhM5SQl4kSWek92INzuhgmPVxv43xR1Es9mRg470PKGfSxlc1Wf9cA9Gag6ZOY8C1bu2_6mhZW7QV2aiakai0tcLBX3orUfaqauUiHABEgMSUMwmLEUF5NVzyKTRTiOBSjlXOHcM9mo4IcoPKv3C9tubnWDenY_sX1GourT9EWx581Ddso5Rfa1aDmUxVChwwpByujTJVZL6ZA0ttaWacP51E1BTcmSN6jV7AeZDfoTvXNj4cEv-xe9bpQzVv5kQuMWH2P49rnBzUy6BkLJN2WbggqOXXYQdpfdEeUbVWyTlD0mYETThMPUwdBDP__-ji-sB2i0c0f1U3vCXKjnn3soJEN2PpDb388GP_b5G3Rxtt8iSRH6hcnJzSwjM2BSe3FFPUw2wAxH1v8PuK",
+            "passport_auth_mix_state": "ko35htvxt1kaixclmkwcyj2duhlljeh6vih0o6wty0czlq2p",
+            "record_force_login": "%7B%22timestamp%22%3A1769876121652%2C%22force_login_video%22%3A7%2C%22force_login_live%22%3A0%2C%22force_login_direct_video%22%3A0%7D",
+            "ttwid": ttwid,
+            "biz_trace_id": "219cf3c0",
+            "IsDouyinActive": "false",
+            "stream_player_status_params": "%22%7B%5C%22is_auto_play%5C%22%3A0%2C%5C%22is_full_screen%5C%22%3A0%2C%5C%22is_full_webscreen%5C%22%3A1%2C%5C%22is_mute%5C%22%3A1%2C%5C%22is_speed%5C%22%3A1%2C%5C%22is_visible%5C%22%3A0%7D%22"
+        }
+        
+        serialized_cookies = serialize_cookies(cookies)
+        status = update_douyin_cookie("/app/crawlers/douyin/web/config.yaml",serialized_cookies)
+        
+        return status
+        
+    except Exception as e:
+        return {"status": 500, "error": str(e)}
+    
+@app.get("/feed_user_videos")
+def root():
+    try:
+        # userID = "MS4wLjABAAAAarOBhxJoW72Gahflo_RnuDtLH0moQU1aC-_Wt9D0XHhs_Eoss5GpyS6fjwAEm8RR"
+        userID = "MS4wLjABAAAATd30q_hSWE0klt7V-5NspJvXmS5LY9Y6HySunSi1FXdwosqAqAVjSdkRVv5_pvGP"
+        data = fetch_user_posts(userID, max_count=30)
         return {"status": 200, "data": data}
     except Exception as e:
         return {"status": 500, "error": str(e)}
     
-    
-def fetch_douyin_hot_search(bogus=None, cookie=None, mstoken=None, ttwid=None, svwebid=None):
-    uifid = "5bdad390e71fd6e6e69e3cafe6018169c2447c8bc0b8484cc0f203a274f99fdb9cf7a4d1e0b69a920c6ca4ad980608788e76671ef24a5084040fdb53a9732ecf1200212c1e7826103933f21370c4cd85147e664fa82539303108b24e10c61c78d8c0d2ca2d0b88dfec4b28fbcb3330df93732eb113d2a1693459da96c31496d7ac617ff67394a29e3341caf3ab79fbf7838a1adc248fdaacbace735542dd91bf"
-    
-    # --- 2. FULL PARAMETERS ---
-    params = {
-        "device_platform": "webapp",
-        "aid": "6383",
-        "channel": "channel_pc_web",
-        "detail_list": "1",
-        "source": "6",
-        "main_billboard_count": "5",
-        "update_version_code": "170400",
-        "pc_client_type": "1",
-        "pc_libra_divert": "Windows",
-        "support_h265": "1",
-        "support_dash": "1",
-        "cpu_core_num": "8",
-        "version_code": "170400",
-        "version_name": "17.4.0",
-        "cookie_enabled": "true",
-        "screen_width": "1920",
-        "screen_height": "1080",
-        "browser_language": "vi-VN",
-        "browser_platform": "Win32",
-        "browser_name": "Chrome",
-        "browser_version": "143.0.0.0",
-        "browser_online": "true",
-        "engine_name": "Blink",
-        "engine_version": "143.0.0.0",
-        "os_name": "Windows",
-        "os_version": "10",
-        "device_memory": "8",
-        "platform": "PC",
-        "downlink": "4.45",
-        "effective_type": "4g",
-        "round_trip_time": "50",
-        "webid": "7600804439108453926",
-        "uifid": uifid,
-        "verifyFp": svwebid,
-        "fp": svwebid,
-        "msToken": mstoken,
-        "a_bogus": bogus
-    }
-
-    # --- 3. FULL HEADERS ---
-    headers = {
-        "accept": "application/json, text/plain, */*",
-        "accept-language": "vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5",
-        "priority": "u=1, i",
-        "referer": "https://www.douyin.com/?recommend=1",
-        "sec-ch-ua": '"Google Chrome";v="143", "Chromium";v="143", "Not A(Brand";v="24"',
-        "sec-ch-ua-mobile": "?0",
-        "sec-ch-ua-platform": '"Windows"',
-        "sec-fetch-dest": "empty",
-        "sec-fetch-mode": "cors",
-        "sec-fetch-site": "same-origin",
-        "uifid": uifid,
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
-    }
-
-    # --- 4. FULL COOKIES (Parsed from your -b string) ---
-    # If you have a full cookie string, you can use: 
-    # cookies = {c.split('=')[0]: c.split('=')[1] for c in custom_cookie_str.split('; ')}
-    cookies = {
-        "__ac_nonce": "0697b7b67009c910188d3",
-        "__ac_signature": "_02B4Z6wo00f01h4SFSQAAIDCfAwRYED.9JYeMhGAAO8O6e",
-        "enter_pc_once": "1",
-        "UIFID_TEMP": "5bdad390e71fd6e6e69e3cafe6018169c2447c8bc0b8484cc0f203a274f99fdb9cf7a4d1e0b69a920c6ca4ad98060878d3b7900073919d9753d60cb2e849edf99a42cb95bb5e203d4561dcbdaa5ba50b",
-        "x-web-secsdk-uid": "c7f5b884-c7a5-4823-a30c-4996ea2b3640",
-        "s_v_web_id": svwebid,
-        "device_web_cpu_core": "8",
-        "device_web_memory_size": "8",
-        "architecture": "amd64",
-        "hevc_supported": "true",
-        "dy_swidth": "1920",
-        "dy_sheight": "1080",
-        "is_dash_user": "1",
-        "passport_csrf_token": "372f0c75fc6a3373936632242bb9b6de",
-        "odin_tt": "d5919a42bbe339d3c0204298655300868ba3ea167df34ba1ebb3403693c5129d941796d0f04b5a811e91949e1a075c7309b4535c4a1f166c95737704c345db9246c7441a1058a612ce0e302be54668eb",
-        "UIFID": uifid,
-        "ttwid": ttwid,
-        "IsDouyinActive": "true"
-    }
-
-    try:
-        response = requests.get(
-            "https://www.douyin.com/aweme/v1/web/hot/search/list/",
-            params=params,
-            headers=headers,
-            cookies=cookies,
-            timeout=10
-        )
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"Request failed: {e}")
-        return None
-
-def call_douyin_feed_api(api_url, headers, params=None):
-    try:
-        response = requests.get(api_url, headers=headers, params=params, timeout=10)
-        response.raise_for_status() 
-        
-        data = response.json()
-        return data
-    except requests.exceptions.RequestException as e:
-        print(f"Lỗi khi gọi API: {e}")
-        return None
-
-def parse_video_urls(feed_data):
-    video_list = []
-    
-    if not feed_data or 'aweme_list' not in feed_data:
-        print("Không tìm thấy dữ liệu 'aweme_list' hợp lệ.")
-        return []
-
-    for item in feed_data['aweme_list']:
-        try:
-            desc = item.get('desc', 'no_title')
-            
-            video_info = item.get('video', {})
-            
-            play_addr = video_info.get('play_addr', {})
-            
-            url_list = play_addr.get('url_list', [])
-            
-            if url_list:
-                video_url = url_list[0]
-                
-                video_list.append({
-                    'id': item.get('aweme_id'),
-                    'title': desc,
-                    'url': video_url
-                })
-        except Exception as e:
-            print(f"Lỗi khi parse item: {e}")
-            continue
-            
-    return video_list
-
-def download_video(url, filename, headers):
-    try:
-        with requests.get(url, headers=headers, stream=True) as r:
-            r.raise_for_status()
-            with open(filename, 'wb') as f:
-                for chunk in r.iter_content(chunk_size=8192):
-                    f.write(chunk)
-        print(f"Đã tải xong: {filename}")
-        return True
-    except Exception as e:
-        print(f"Lỗi khi tải video {filename}: {e}")
-        return False
-
-def create_msToken():
-    try:
-        response = requests.get("http://douyin-downloader/api/douyin/web/generate_real_msToken")
-        response.raise_for_status()
-        msToken = response.json().get("data").get("msToken")
-        return msToken
-    except requests.exceptions.RequestException as e:
-        return f"Đã có lỗi xảy ra: {e}"
-    
-def create_xbogus():
-    try:
-        response = requests.get("http://douyin-downloader/api/douyin/web/generate_real_msToken")
-        response.raise_for_status()
-        msToken = response.json().get("data").get("msToken")
-        return msToken
-    except requests.exceptions.RequestException as e:
-        return f"Đã có lỗi xảy ra: {e}"
-    
-def create_abogus():
-    try:
-        response = requests.get("http://douyin-downloader/api/douyin/web/generate_real_msToken")
-        response.raise_for_status()
-        msToken = response.json().get("data").get("msToken")
-        return msToken
-    except requests.exceptions.RequestException as e:
-        return f"Đã có lỗi xảy ra: {e}"
-
-def create_ttwid():
-    try:
-        response = requests.get("http://douyin-downloader/api/douyin/web/generate_ttwid")
-        response.raise_for_status()
-        msToken = response.json().get("data").get("ttwid")
-        return msToken
-    except requests.exceptions.RequestException as e:
-        return f"Đã có lỗi xảy ra: {e}"
-
-def create_svwebid():
-    try:
-        response = requests.get("http://douyin-downloader/api/douyin/web/generate_s_v_web_id")
-        response.raise_for_status()
-        svwebid = response.json().get("data").get("svwebid")
-        return svwebid
-    except requests.exceptions.RequestException as e:
-        return f"Đã có lỗi xảy ra: {e}"
-
-# if __name__ == "__main__":
-#     my_config = DouyinConfig(
-#         cookie="ttwid=1%7C...; odin_tt=...; sessionid=...",
-#         x_bogus="DFSzswVLZ...",
-#         signature="_02B4Z..."
-#     )
-#     API_URL = "https://www.douyin.com/aweme/v1/web/tab/feed/" 
-    
-#     MY_HEADERS = {
-#         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) ...", 
-#         "Cookie": "douyin.com; passport_csrf_token=...; ttwid=...",
-#         "Referer": "https://www.douyin.com/"
-#     }
-    
-#     MY_PARAMS = {
-#         "device_platform": "webapp",
-#         "aid": "6383",
-#         "channel_id": "0",
-#         "count": "10",
-#         # Các tham số mã hóa khác bạn đã có:
-#         # "X-Bogus": "...",
-#         # "_signature": "..."
-#     }
-
-#     print("Đang lấy dữ liệu feed...")
-#     data = call_douyin_feed_api(API_URL, MY_HEADERS, MY_PARAMS)
-    
-#     if data:
-#         videos = parse_video_urls(data)
-#         print(f"Tìm thấy {len(videos)} video.")
-        
-#         if not os.path.exists('downloads'):
-#             os.makedirs('downloads')
-            
-#         if len(videos) > 0:
-#             first_video = videos[0]
-#             print(f"Đang tải: {first_video['title']}")
-            
-#             safe_title = "".join([c for c in first_video['title'] if c.isalnum() or c in (' ', '-', '_')]).strip()
-#             file_path = f"downloads/{safe_title[:50]}.mp4"
-            
-#             download_video(first_video['url'], file_path, MY_HEADERS)

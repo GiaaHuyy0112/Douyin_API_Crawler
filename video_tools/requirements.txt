@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+requests
+moviepy 
+openai-whisper
+edge-tts
