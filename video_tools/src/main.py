@@ -22,9 +22,9 @@ def format_timestamp(seconds: float):
 def generate_subtitles(name: str):
     try:
         print("--- Đang trích xuất âm thanh từ video... ---")
-        video = VideoFileClip(f"/app/video_tools/import/{name}.mp4")
-        output_srt = f"/app/video_tools/export/{name}.srt"
-        audio_path = f"/app/video_tools/export/{name}.mp3"
+        video = VideoFileClip(f"/home/shared/downloads/{name}.mp4")
+        output_srt = f"/home/shared/srt/{name}.srt"
+        audio_path = f"/home/shared/temp/{name}.mp3"
         video.audio.write_audiofile(audio_path, logger=None)
         
         print("--- Đang nhận diện giọng nói (Whisper)... ---")
@@ -81,7 +81,7 @@ async def generate_audio_segments(srt_path):
             text = " ".join(lines[2:])
             
             # Tạo file audio tạm cho đoạn này
-            temp_mp3 = f"/app/video_tools/temp/temp_{start_time}.mp3"
+            temp_mp3 = f"/home/shared/temp/temp_{start_time}.mp3"
             VOICE = "vi-VN-HoaiMyNeural"
             communicate = edge_tts.Communicate(text, VOICE)
             await communicate.save(temp_mp3)
@@ -95,7 +95,7 @@ async def generate_audio_segments(srt_path):
 
 async def generate_smart_audio(text, start_time, end_time, index):
     limit = end_time - start_time
-    temp_mp3 = f"/app/video_tools/temp/segment_{index}.mp3"
+    temp_mp3 = f"/home/shared/temp/segment_{index}.mp3"
     
     VOICE = "vi-VN-HoaiMyNeural"
     communicate = edge_tts.Communicate(text, VOICE)
@@ -178,11 +178,11 @@ async def create_dubbed_video_endpoint(name: str = None):
         if not name:
             raise ValueError("name is required")
         # Tạo video lồng tiếng
-        srt_path = f"/app/video_tools/export/{name}.srt"
-        output_video = f"/app/video_tools/export/{name}_dubbed.mp4"
+        srt_path = f"/home/shared/srt/{name}.srt"
+        output_video = f"/home/shared/export/{name}_dubbed.mp4"
         
         audio_clips = await generate_audio_segments(srt_path)
-        merge_audio_to_video(f"/app/video_tools/import/{name}.mp4", audio_clips, output_video)
+        merge_audio_to_video(f"/home/shared/import/{name}.mp4", audio_clips, output_video)
         
         return {"message": "Dubbed video created successfully", "video_path": output_video}
     except Exception as e:
@@ -195,9 +195,9 @@ async def create_final_video(name: str = None):
         if not name:
             raise ValueError("name is required")
         
-        org_path = f"/app/video_tools/import/{name}.mp4"
-        srt_path = f"/app/video_tools/export/{name}.srt"
-        output_video = f"/app/video_tools/export/{name}_final.mp4"
+        org_path = f"/home/shared/downloads/{name}.mp4"
+        srt_path = f"/home/shared/srt/{name}.srt"
+        output_video = f"/home/shared/export/{name}_final.mp4"
         
         await process_dubbing(org_path, srt_path, output_video)
         

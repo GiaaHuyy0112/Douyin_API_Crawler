@@ -61,11 +61,11 @@ def root():
         return {"status": 500, "error": str(e)}
     
 @app.get("/feed_user_videos")
-def root():
+def root(userID: str, max_count: int):
     try:
         # userID = "MS4wLjABAAAAarOBhxJoW72Gahflo_RnuDtLH0moQU1aC-_Wt9D0XHhs_Eoss5GpyS6fjwAEm8RR"
-        userID = "MS4wLjABAAAATd30q_hSWE0klt7V-5NspJvXmS5LY9Y6HySunSi1FXdwosqAqAVjSdkRVv5_pvGP"
-        data = fetch_user_posts(userID, max_count=30)
+        # userID = "MS4wLjABAAAATd30q_hSWE0klt7V-5NspJvXmS5LY9Y6HySunSi1FXdwosqAqAVjSdkRVv5_pvGP"
+        data = fetch_user_posts(userID, max_count)
         return {"status": 200, "data": data}
     except Exception as e:
         return {"status": 500, "error": str(e)}

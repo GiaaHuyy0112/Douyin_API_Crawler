@@ -19,6 +19,7 @@ services:
     volumes:
       - ./api:/app/api
       - ./douyin_downloader/config/config.yaml:/app/crawlers/douyin/web/config.yaml
+      - ./shared:/home/shared
     networks:
       - douyin_api
     command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
@@ -33,11 +34,41 @@ services:
       - "9000:9000"
     volumes:
       - ./video_tools:/app/video_tools
+      - ./shared:/home/shared
     networks:
       - douyin_api
     command: uvicorn src.main:app --host 0.0.0.0 --port 9000 --reload
     environment:
       - WATCHFILES_FORCE_POLLING=true
+
+  ollama:
+    build:
+      context: ./ollama
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./ollama/storage:/root/.ollama
+    networks:
+      - douyin_api
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=0.0.0.0
+      - OLLAMA_HOST=ollama:11434
+      - N8N_BLOCK_FILE_ACCESS_TO_N8N_FILES=false
+      - N8N_RESTRICT_FILE_ACCESS_TO=/home/shared
+    volumes:
+      - ./n8n/storage:/home/node/.n8n
+      - ./shared:/home/shared
+    networks:
+      - douyin_api
 
 networks:
   douyin_api:
