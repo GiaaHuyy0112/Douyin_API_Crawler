@@ -1,15 +1,15 @@
 {
-  "name": "🗨️Ollama Chat",
+  "name": "Douyin Crawler",
   "nodes": [
     {
       "parameters": {},
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -1120,
-        192
+        -3936,
+        492
       ],
-      "id": "eb75d529-62fb-46ce-8b20-5d057485b256",
+      "id": "7aa489ee-72f2-4e18-b00f-3a0ba0a3edfb",
       "name": "When clicking ‘Execute workflow’"
     },
     {
@@ -39,22 +39,11 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -624,
-        192
+        -3488,
+        492
       ],
-      "id": "c06ddb58-4d41-4e33-ad7f-41d639f674e6",
-      "name": "If"
-    },
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.stopAndError",
-      "typeVersion": 1,
-      "position": [
-        -416,
-        288
-      ],
-      "id": "53c30054-ae5d-4e10-be94-05b4df96e944",
-      "name": "Stop and Error"
+      "id": "cec30bd0-1c86-4da1-b34d-9d3bb0f924b2",
+      "name": "If Cookie Update Success"
     },
     {
       "parameters": {
@@ -83,22 +72,11 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -208,
-        96
+        -3040,
+        492
       ],
-      "id": "4c5d90e2-a7b3-4793-8627-a9ccf2f12025",
-      "name": "If1"
-    },
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.stopAndError",
-      "typeVersion": 1,
-      "position": [
-        0,
-        192
-      ],
-      "id": "31a412e5-cfb4-4a85-830a-313f97dfdac5",
-      "name": "Stop and Error1"
+      "id": "b4dcddba-37e6-4d65-9532-af285ebc5e8f",
+      "name": "If Got Videos"
     },
     {
       "parameters": {
@@ -108,10 +86,10 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        0,
-        0
+        -2816,
+        492
       ],
-      "id": "42c72641-84b8-40c0-859b-9c42d22e08ed",
+      "id": "b1c62a26-f496-4e38-ba52-b3bc05607c82",
       "name": "Split Out"
     },
     {
@@ -121,10 +99,10 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        208,
-        0
+        -2592,
+        492
       ],
-      "id": "5c000c2d-4f2a-4d80-8671-1f77817d86a6",
+      "id": "991bb02c-ae22-4953-be6f-db50dd891a0d",
       "name": "Loop Over Items"
     },
     {
@@ -141,26 +119,26 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        464,
-        0
+        -2368,
+        104
       ],
-      "id": "211e1bc2-ed4b-44d3-8ecf-3ad4bcbbcfb1",
-      "name": "HTTP Request2"
+      "id": "6661756a-229b-4398-8598-349fca79fd45",
+      "name": "Download Video"
     },
     {
       "parameters": {
         "operation": "write",
-        "fileName": "/home/shared/downloads/video.mp4",
+        "fileName": "={{ \"/home/shared/downloads/video_\" + $runIndex + \".mp4\" }}",
         "options": {}
       },
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1.1,
       "position": [
-        656,
-        16
+        -2144,
+        104
       ],
-      "id": "d1deacf1-6cb1-4de5-ab2a-0d344b5cc2be",
-      "name": "Read/Write Files from Disk"
+      "id": "e07d8090-1aae-4f50-a3ae-b60dc845427a",
+      "name": "Save Video (Dynamic Name)"
     },
     {
       "parameters": {
@@ -170,10 +148,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        -832,
-        192
+        -3712,
+        492
       ],
-      "id": "53b1bf93-f3bc-4f80-b8ce-77bb4dd71827",
+      "id": "a88b3794-41ca-4d43-beb3-0786db6da748",
       "name": "Update Cookies"
     },
     {
@@ -184,7 +162,7 @@
           "parameters": [
             {
               "name": "userID",
-              "value": "MS4wLjABAAAAarOBhxJoW72Gahflo_RnuDtLH0moQU1aC-_Wt9D0XHhs_Eoss5GpyS6fjwAEm8RR"
+              "value": "MS4wLjABAAAAObLqoivX9v17p8Mx6ehZ-8Jm2neeJg05i7gagKeCWtw"
             },
             {
               "name": "max_count",
@@ -201,77 +179,23 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        -416,
-        96
+        -3264,
+        492
       ],
-      "id": "7758852c-b50a-4a4a-b363-099c14e24bca",
+      "id": "a535824f-5361-44ef-8276-e3174721674d",
       "name": "Get User Video URLs"
     },
     {
       "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "83512d63-7bf1-4d4f-891d-b55ca375c0e6",
-              "name": "subtitle",
-              "value": true,
-              "type": "boolean"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        864,
-        16
-      ],
-      "id": "74527a7a-0e5c-4b46-ab3b-0ca56b05c88b",
-      "name": "Edit Fields"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "id": "abfc736f-649f-42a6-888b-b1699ee429c6",
-              "leftValue": "={{ $json.subtitle }}",
-              "rightValue": false,
-              "operator": {
-                "type": "boolean",
-                "operation": "equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        1072,
-        16
-      ],
-      "id": "64e90f09-1212-41d2-b13d-84452b7e7b6a",
-      "name": "If2"
-    },
-    {
-      "parameters": {
-        "url": "http://video_tools:9000/generate_subtitles",
-        "sendQuery": true,
-        "queryParameters": {
+        "method": "POST",
+        "url": "http://video_tools:9000/api/v1/subtitles",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
           "parameters": [
             {
-              "name": "name",
-              "value": "={{ $('Read/Write Files from Disk').item.json.fileName.split(\"/\").last().split(\".\").first() }}"
+              "name": "video_name",
+              "value": "={{ $('Save Video (Dynamic Name)').item.json.fileName.split(\"/\").last().split(\".\").first() }}"
             }
           ]
         },
@@ -284,93 +208,50 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        1280,
-        112
+        -1920,
+        104
       ],
-      "id": "4edf367b-8551-4ee5-b90c-1c1bf892e324",
+      "id": "0926abce-1556-4680-98f1-1a928590e09e",
       "name": "Generate SRT"
     },
     {
       "parameters": {
         "promptType": "define",
-        "text": "=I want to translate this content to Vietnamese. Please provide an accurate translation that ensures the entire text is meaningful and stays true to the original intent. Do not include any language other than Vietnamese in your response. Please keep file's format and don't change anything.\nThis is content:\n{{ $json.data.base64Decode() }}\nPlease output the translated content with file's format."
+        "text": "=Just translate for me all the below content to Vietnamese. Return exact format of the content that I  provide for you (index, timestamp, translated content) and don't add anything not related (chat, answer, apology).\n{{ $json.text_chunk }}"
       },
-      "id": "d7ece273-308c-4d32-a05e-a104e5053967",
+      "id": "1d8fc725-ebef-4ef1-a46a-49706e909e7f",
       "name": "Basic LLM Chain",
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "position": [
-        2096,
-        160
+        -128,
+        104
       ],
       "typeVersion": 1.5,
+      "alwaysOutputData": false,
       "onError": "continueErrorOutput"
     },
     {
       "parameters": {
         "model": "qwen2.5:1.5b",
-        "options": {}
+        "options": {
+          "temperature": 0.1
+        }
       },
-      "id": "925b69d1-ed7e-4971-b695-aa2b37006ace",
+      "id": "47ee210f-dbf1-44f0-a3bb-19f72134a192",
       "name": "Ollama Model",
       "type": "@n8n/n8n-nodes-langchain.lmOllama",
       "position": [
-        2144,
-        448
+        -56,
+        328
       ],
       "typeVersion": 1,
+      "executeOnce": false,
       "credentials": {
         "ollamaApi": {
           "id": "NhoZiomh8AigckqL",
           "name": "Ollama account"
         }
       }
-    },
-    {
-      "parameters": {
-        "content": "## Model Node\n- Name: Ollama Model\n- Type: LangChain Ollama Integration\n- Model: llama3.2:latest\n- Purpose: Provides the language model capabilities",
-        "height": 200,
-        "width": 768
-      },
-      "id": "03b99c6e-fea1-47d4-9558-c622bd85c182",
-      "name": "Sticky Note1",
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        1600,
-        400
-      ],
-      "typeVersion": 1
-    },
-    {
-      "parameters": {
-        "content": "## Processing Node\n- Name: Basic LLM Chain\n- Type: LangChain LLM Chain\n- Purpose: Handles the processing of messages through the language model and returns a structured JSON object.\n\n",
-        "height": 620,
-        "width": 500,
-        "color": 3
-      },
-      "id": "6d1453bf-7558-424b-9f8b-ff1a8e2ac670",
-      "name": "Sticky Note3",
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        1984,
-        -304
-      ],
-      "typeVersion": 1
-    },
-    {
-      "parameters": {
-        "content": "### Prompt (Change this for your use case)\nProvide the users prompt and response as a JSON object with two fields:\n- Prompt\n- Response\n\n\nAvoid any preample or further explanation.\nThis is the question: {{ $json.chatInput }}",
-        "height": 200,
-        "width": 420,
-        "color": 7
-      },
-      "id": "fd5aa58b-3cd0-44b6-aaf5-5f44c4cf0bc9",
-      "name": "Sticky Note4",
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        2016,
-        -112
-      ],
-      "typeVersion": 1
     },
     {
       "parameters": {
@@ -386,30 +267,14 @@
         },
         "options": {}
       },
-      "id": "db3440f5-283d-4a23-9969-955c8cd13595",
+      "id": "9a2bd64e-059c-4684-88f1-08a715675911",
       "name": "Error Response",
       "type": "n8n-nodes-base.set",
       "position": [
-        2896,
-        752
+        224,
+        200
       ],
       "typeVersion": 3.4
-    },
-    {
-      "parameters": {
-        "content": "## Error Response Node\n- Type: Set Node\n- Purpose: Handles error cases when the Basic LLM Chain fails to process the chat message properly. It provides a fallback response mechanism to ensure the workflow remains robust.\n\n**Key Features**\n- Provides default error messaging\n- Maintains consistent response structure\n- Connects to the error output branch of the LLM Chain\n- Ensures graceful failure handling\n\nThe Error Response node activates when the main processing chain encounters issues, ensuring users always receive feedback even when errors occur in the language model processing.\n",
-        "height": 560,
-        "width": 540,
-        "color": 2
-      },
-      "id": "3d99fa7a-e97e-46f5-871a-e4cc2c76fe1f",
-      "name": "Sticky Note7",
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        2688,
-        384
-      ],
-      "typeVersion": 1
     },
     {
       "parameters": {
@@ -419,10 +284,10 @@
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1.1,
       "position": [
-        1488,
-        112
+        -1248,
+        104
       ],
-      "id": "8c9e6a42-de25-47e7-be50-655829fa0027",
+      "id": "7aafcca3-16de-4621-9a00-9144bca9bb90",
       "name": "Read SRT file"
     },
     {
@@ -434,28 +299,28 @@
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1.1,
       "position": [
-        1680,
-        128
+        -1024,
+        104
       ],
-      "id": "b9d2cdf9-6016-4855-84a7-6764cd1f16ed",
+      "id": "1c8a2915-a76f-4f09-ba94-832dc512da95",
       "name": "Get SRT Content"
     },
     {
       "parameters": {
         "operation": "toText",
-        "sourceProperty": "text",
+        "sourceProperty": "final_srt_content",
         "options": {
           "encoding": "utf8",
-          "fileName": "video_translate.srt"
+          "fileName": "={{ \"/home/shared/srt/video_\" + $runIndex + \"_translated.srt\" }}"
         }
       },
       "type": "n8n-nodes-base.convertToFile",
       "typeVersion": 1.1,
       "position": [
-        2560,
-        144
+        448,
+        8
       ],
-      "id": "94bfa906-2a0d-43d6-855e-2187817e2f98",
+      "id": "0255f4c0-179b-42d5-9812-fa06ff20817f",
       "name": "Convert Translated SRT into File"
     },
     {
@@ -467,21 +332,35 @@
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1.1,
       "position": [
-        2752,
-        144
+        672,
+        8
       ],
-      "id": "84dea457-85a5-4a74-b778-0bc845ac6c89",
+      "id": "1b9d3799-59af-43b9-b869-af530a3f413c",
       "name": "Write Translated SRT File"
     },
     {
       "parameters": {
-        "url": "http://video_tools:9000/generate_dubbed_video",
+        "method": "POST",
+        "url": "http://video_tools:9000/api/v1/dubbing",
         "sendQuery": true,
         "queryParameters": {
           "parameters": [
             {
               "name": "name",
-              "value": "={{ $binary.data.fileName.split(\".\").first() }}"
+              "value": "={{ \"video_\" + $runIndex }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "video_name",
+              "value": "={{ \"video_\" + $runIndex }}"
+            },
+            {
+              "name": "srt_name"
             }
           ]
         },
@@ -494,11 +373,148 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        2960,
-        144
+        896,
+        228
       ],
-      "id": "9b602ae4-66ec-495c-a2f2-cacaf461df77",
-      "name": "HTTP Request"
+      "id": "8f7c3725-aa46-495c-b657-cd99141c6831",
+      "name": "Generate Dubbed Video"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5d0c5f0f-0d70-47e9-b19d-00ab0f25d544",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1472,
+        104
+      ],
+      "id": "6d581eb1-09ef-4257-8975-0adcedfa56fa",
+      "name": "If SRT Success",
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c038a8d4-3dc6-43fe-bb6f-abce16989992",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -800,
+        104
+      ],
+      "id": "010f0250-e6fc-4031-96a5-037876b87759",
+      "name": "If SRT Content"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Nếu dữ liệu là chuỗi base64 nằm trong json như prompt của bạn:\nconst base64String = $json.data; \n\n// Convert sang text utf-8\nconst decodedText = Buffer.from(base64String, 'base64').toString('utf-8');\n\nreturn {\n  json: {\n    clean_text: decodedText\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -576,
+        104
+      ],
+      "id": "ef0a8d80-2b60-4bc8-9290-4ed94c14abb8",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Cấu hình: Số lượng block subtitle trong 1 lần gửi cho AI\n// Với model 1.5b, nên để 20-30 block là an toàn nhất.\nconst CHUNK_SIZE = 30; \n\n// Lấy nội dung text từ node trước (sửa 'clean_text' thành tên biến thực tế của bạn)\nconst srtContent = $input.first().json.clean_text;\n\nif (!srtContent) {\n  throw new Error(\"Không tìm thấy nội dung file để cắt!\");\n}\n\n// 1. Tách các block SRT dựa trên 2 dòng trống (chuẩn SRT)\n// Regex này tìm các dòng trống giữa các block\nconst blocks = srtContent.split(/\\n\\s*\\n/);\n\n// 2. Gom các block lại thành từng Chunk\nconst chunks = [];\nfor (let i = 0; i < blocks.length; i += CHUNK_SIZE) {\n  // Lấy ra 30 block và nối lại\n  const chunkText = blocks.slice(i, i + CHUNK_SIZE).join('\\n\\n');\n  \n  // Chỉ đẩy vào nếu chunk có nội dung\n  if (chunkText.trim().length > 0) {\n    chunks.push({\n      json: {\n        text_chunk: chunkText,\n        chunk_index: i / CHUNK_SIZE + 1, // Đánh số thứ tự chunk để dễ theo dõi\n        total_chunks: Math.ceil(blocks.length / CHUNK_SIZE)\n      }\n    });\n  }\n}\n\n// n8n sẽ tự động chạy node tiếp theo (Ollama) cho TỪNG item trong mảng 'chunks' này\nreturn chunks;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -352,
+        104
+      ],
+      "id": "31a7e417-4242-4e58-969a-b88b4cbf8ef5",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Lấy tất cả các kết quả từ node AI trước đó\n// Giả sử node AI trả về kết quả trong biến 'output' hoặc mặc định là 'text'\n// Bạn cần check output của node AI để sửa 'response' cho đúng key.\n\n// Sắp xếp lại theo thứ tự chunk_index (đề phòng n8n chạy không tuần tự)\nitems.sort((a, b) => a.json.chunk_index - b.json.chunk_index);\n\n// Gom toàn bộ văn bản đã dịch lại\nconst fullTranslatedSrt = items.map(item => {\n    // Nếu dùng Basic LLM Chain, kết quả thường ở 'text'\n    // Nếu dùng Ollama Chat, kết quả thường ở 'message.content' hoặc 'response'\n    // Hãy kiểm tra output node trước để thay thế dòng dưới đây:\n    return item.json.text || item.json.response || item.json.output; \n}).join('\\n\\n');\n\nreturn {\n  json: {\n    final_srt_content: fullTranslatedSrt,\n    file_name: \"vietnamese_subtitle.srt\"\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        8
+      ],
+      "id": "70e211ca-d7bb-4888-8f14-1467abe71dbc",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "05c2ec5d-5acd-4683-84b4-a433094e3424",
+              "name": "task_id",
+              "value": "={{ $json.task_id }}",
+              "type": "string"
+            },
+            {
+              "id": "97e1a4bb-b990-4c56-9628-0295bd4e0f42",
+              "name": "status",
+              "value": "={{ $json.status }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1696,
+        104
+      ],
+      "id": "eeee7bd6-24e9-45fe-ae6e-ea66eaaec608",
+      "name": "Edit Fields"
     }
   ],
   "pinData": {},
@@ -514,7 +530,7 @@
         ]
       ]
     },
-    "If": {
+    "If Cookie Update Success": {
       "main": [
         [
           {
@@ -522,28 +538,14 @@
             "type": "main",
             "index": 0
           }
-        ],
-        [
-          {
-            "node": "Stop and Error",
-            "type": "main",
-            "index": 0
-          }
         ]
       ]
     },
-    "If1": {
+    "If Got Videos": {
       "main": [
         [
           {
             "node": "Split Out",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Stop and Error1",
             "type": "main",
             "index": 0
           }
@@ -566,18 +568,18 @@
         [],
         [
           {
-            "node": "HTTP Request2",
+            "node": "Download Video",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "HTTP Request2": {
+    "Download Video": {
       "main": [
         [
           {
-            "node": "Read/Write Files from Disk",
+            "node": "Save Video (Dynamic Name)",
             "type": "main",
             "index": 0
           }
@@ -588,7 +590,7 @@
       "main": [
         [
           {
-            "node": "If",
+            "node": "If Cookie Update Success",
             "type": "main",
             "index": 0
           }
@@ -599,44 +601,15 @@
       "main": [
         [
           {
-            "node": "If1",
+            "node": "If Got Videos",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Read/Write Files from Disk": {
+    "Save Video (Dynamic Name)": {
       "main": [
-        [
-          {
-            "node": "Edit Fields",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Edit Fields": {
-      "main": [
-        [
-          {
-            "node": "If2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "If2": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items",
-            "type": "main",
-            "index": 0
-          }
-        ],
         [
           {
             "node": "Generate SRT",
@@ -650,7 +623,7 @@
       "main": [
         [
           {
-            "node": "Read SRT file",
+            "node": "Edit Fields",
             "type": "main",
             "index": 0
           }
@@ -661,7 +634,7 @@
       "main": [
         [
           {
-            "node": "Convert Translated SRT into File",
+            "node": "Code in JavaScript2",
             "type": "main",
             "index": 0
           }
@@ -701,7 +674,7 @@
       "main": [
         [
           {
-            "node": "Basic LLM Chain",
+            "node": "If SRT Content",
             "type": "main",
             "index": 0
           }
@@ -723,7 +696,109 @@
       "main": [
         [
           {
-            "node": "HTTP Request",
+            "node": "Generate Dubbed Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Dubbed Video": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If SRT Success": {
+      "main": [
+        [
+          {
+            "node": "Read SRT file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If SRT Content": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Response": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Convert Translated SRT into File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If SRT Success",
             "type": "main",
             "index": 0
           }
@@ -737,11 +812,11 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "afa13f46-fe57-48de-accf-16532267bef9",
+  "versionId": "6d733204-81b0-419f-94ca-9afc2b9cb48f",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "dcf067041417ed5690dc9a0557ef314e378710bc7ce8caa5eddf7f41211441d5"
   },
-  "id": "AAO0ggPbx-1vIizNn6fs1",
+  "id": "VXI7btMTSOLcVhmqVHHhk",
   "tags": []
 }

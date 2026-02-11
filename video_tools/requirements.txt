@@ -4,3 +4,7 @@ requests
 moviepy 
 openai-whisper
 edge-tts
+torch
+python-dotenv
+pydantic-settings
+python-multipart
