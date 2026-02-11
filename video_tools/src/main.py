@@ -44,10 +44,10 @@ def generate_subtitles(name: str):
                 f.write(f"{text}\n\n")
 
         print(f"✅ THÀNH CÔNG! File của bạn nằm tại: {os.path.abspath(output_srt)}")
-        return {"message": "Subtitles created successfully", "srt_path": os.path.abspath(output_srt)}
+        return {"status":200, "message": "Subtitles created successfully", "srt_path": os.path.abspath(output_srt)}
     except Exception as e:
         print(f"❌ Có lỗi xảy ra: {e}")
-        return {"error": str(e)}
+        return {"status":500, "error": str(e)}
     finally:
         # Dọn dẹp file tạm
         if os.path.exists(audio_path):
@@ -184,9 +184,9 @@ async def create_dubbed_video_endpoint(name: str = None):
         audio_clips = await generate_audio_segments(srt_path)
         merge_audio_to_video(f"/home/shared/import/{name}.mp4", audio_clips, output_video)
         
-        return {"message": "Dubbed video created successfully", "video_path": output_video}
+        return {"status":200, "message": "Dubbed video created successfully", "video_path": output_video}
     except Exception as e:
-        return {"error": str(e)}
+        return {"status":500, "error": str(e)}
     
     
 @app.get("/generate_final_video")
@@ -196,11 +196,11 @@ async def create_final_video(name: str = None):
             raise ValueError("name is required")
         
         org_path = f"/home/shared/downloads/{name}.mp4"
-        srt_path = f"/home/shared/srt/{name}.srt"
-        output_video = f"/home/shared/export/{name}_final.mp4"
+        srt_path = f"/home/shared/srt/{name}_translated.srt"
+        output_video = f"/home/shared/export/{name}.mp4"
         
         await process_dubbing(org_path, srt_path, output_video)
         
-        return {"message": "Final video created successfully", "video_path": output_video}
+        return {"status":200, "message": "Final video created successfully", "video_path": output_video}
     except Exception as e:
-        return {"error": str(e)}
+        return {"status":500, "error": str(e)}

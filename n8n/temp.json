@@ -1,0 +1,688 @@
+{
+  "name": "Auto Translate and Dub Video",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1120,
+        540
+      ],
+      "id": "eb75d529-62fb-46ce-8b20-5d057485b256",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "84128e18-f53d-4a0e-99d5-99a604c749eb",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "success",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -672,
+        540
+      ],
+      "id": "c06ddb58-4d41-4e33-ad7f-41d639f674e6",
+      "name": "If Cookie Update Success"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "07011532-d3ba-46c1-8c26-7217b3e1bf9e",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -224,
+        444
+      ],
+      "id": "4c5d90e2-a7b3-4793-8627-a9ccf2f12025",
+      "name": "If Got Videos"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data.urls",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        0,
+        348
+      ],
+      "id": "42c72641-84b8-40c0-859b-9c42d22e08ed",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        224,
+        348
+      ],
+      "id": "5c000c2d-4f2a-4d80-8671-1f77817d86a6",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json[\"data.urls\"] }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        448,
+        276
+      ],
+      "id": "211e1bc2-ed4b-44d3-8ecf-3ad4bcbbcfb1",
+      "name": "Download Video"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ \"/home/shared/downloads/video_\" + $runIndex + \".mp4\" }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        276
+      ],
+      "id": "d1deacf1-6cb1-4de5-ab2a-0d344b5cc2be",
+      "name": "Save Video (Dynamic Name)"
+    },
+    {
+      "parameters": {
+        "url": "http://api:8000/update_cookies",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -896,
+        540
+      ],
+      "id": "53b1bf93-f3bc-4f80-b8ce-77bb4dd71827",
+      "name": "Update Cookies"
+    },
+    {
+      "parameters": {
+        "url": "http://api:8000/feed_user_videos",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "userID",
+              "value": "MS4wLjABAAAAarOBhxJoW72Gahflo_RnuDtLH0moQU1aC-_Wt9D0XHhs_Eoss5GpyS6fjwAEm8RR"
+            },
+            {
+              "name": "max_count",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -448,
+        444
+      ],
+      "id": "7758852c-b50a-4a4a-b363-099c14e24bca",
+      "name": "Get User Video URLs"
+    },
+    {
+      "parameters": {
+        "url": "http://video_tools:9000/generate_subtitles",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $('Save Video (Dynamic Name)').item.json.fileName.split(\"/\").last().split(\".\").first() }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        960,
+        280
+      ],
+      "id": "4edf367b-8551-4ee5-b90c-1c1bf892e324",
+      "name": "Generate SRT"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=I want to translate this content to Vietnamese. Please provide an accurate translation that ensures the entire text is meaningful and stays true to the original intent. Do not include any language other than Vietnamese in your response. Please keep file's format and don't change anything.\nThis is content:\n{{ $json.data.base64Decode() }}\nPlease output the translated content with file's format."
+      },
+      "id": "d7ece273-308c-4d32-a05e-a104e5053967",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "position": [
+        2464,
+        0
+      ],
+      "typeVersion": 1.5,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": "qwen2.5:1.5b",
+        "options": {}
+      },
+      "id": "925b69d1-ed7e-4971-b695-aa2b37006ace",
+      "name": "Ollama Model",
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "position": [
+        2540,
+        220
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "ollamaApi": {
+          "id": "NhoZiomh8AigckqL",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "13c4058d-2d50-46b7-a5a6-c788828a1764",
+              "name": "text",
+              "type": "string",
+              "value": "=There was an error."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "db3440f5-283d-4a23-9969-955c8cd13595",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        2816,
+        200
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "fileSelector": "=/home/shared/srt/{{ $json.srt_path.split(\"/\").last() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        1792,
+        252
+      ],
+      "id": "8c9e6a42-de25-47e7-be50-655829fa0027",
+      "name": "Read SRT file"
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        2016,
+        252
+      ],
+      "id": "b9d2cdf9-6016-4855-84a7-6764cd1f16ed",
+      "name": "Get SRT Content"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "text",
+        "options": {
+          "encoding": "utf8",
+          "fileName": "video_translate.srt"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        2816,
+        8
+      ],
+      "id": "94bfa906-2a0d-43d6-855e-2187817e2f98",
+      "name": "Convert Translated SRT into File"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/home/shared/srt/{{ $binary.data.fileName }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        3040,
+        8
+      ],
+      "id": "84dea457-85a5-4a74-b778-0bc845ac6c89",
+      "name": "Write Translated SRT File"
+    },
+    {
+      "parameters": {
+        "url": "http://video_tools:9000/generate_dubbed_video",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $binary.data.fileName.split(\".\").first() }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3264,
+        8
+      ],
+      "id": "9b602ae4-66ec-495c-a2f2-cacaf461df77",
+      "name": "Generate Dubbed Video"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5d0c5f0f-0d70-47e9-b19d-00ab0f25d544",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1340,
+        280
+      ],
+      "id": "b3de5db1-b2bb-44cc-805a-169201a2aeda",
+      "name": "If SRT Success"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c038a8d4-3dc6-43fe-bb6f-abce16989992",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2240,
+        252
+      ],
+      "id": "81e1e7ac-4c41-4e8c-9c08-67a3fb45c7b2",
+      "name": "If SRT Content"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Update Cookies",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Cookie Update Success": {
+      "main": [
+        [
+          {
+            "node": "Get User Video URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Got Videos": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Download Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Video": {
+      "main": [
+        [
+          {
+            "node": "Save Video (Dynamic Name)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Cookies": {
+      "main": [
+        [
+          {
+            "node": "If Cookie Update Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get User Video URLs": {
+      "main": [
+        [
+          {
+            "node": "If Got Videos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Video (Dynamic Name)": {
+      "main": [
+        [
+          {
+            "node": "Generate SRT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate SRT": {
+      "main": [
+        [
+          {
+            "node": "If SRT Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Convert Translated SRT into File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read SRT file": {
+      "main": [
+        [
+          {
+            "node": "Get SRT Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get SRT Content": {
+      "main": [
+        [
+          {
+            "node": "If SRT Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Translated SRT into File": {
+      "main": [
+        [
+          {
+            "node": "Write Translated SRT File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Translated SRT File": {
+      "main": [
+        [
+          {
+            "node": "Generate Dubbed Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Dubbed Video": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If SRT Success": {
+      "main": [
+        [
+          {
+            "node": "Read SRT file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If SRT Content": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Response": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "4d48cfc2-c3e3-4309-8ac6-865e9d15cd7f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dcf067041417ed5690dc9a0557ef314e378710bc7ce8caa5eddf7f41211441d5"
+  },
+  "id": "AAO0ggPbx-1vIizNn6fs1",
+  "tags": []
+}
