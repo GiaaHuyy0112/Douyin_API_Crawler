@@ -1,5 +1,7 @@
 FROM ollama/ollama:latest
 
-RUN ollama run qwen2.5:1.5b
+RUN ollama serve & \
+    sleep 5 && \
+    ollama pull qwen2.5:1.5b
 
 ENTRYPOINT ["ollama", "serve"]

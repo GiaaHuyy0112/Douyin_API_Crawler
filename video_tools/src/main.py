@@ -137,12 +137,9 @@ async def process_dubbing(video_path, srt_path, output_path):
             clip = await generate_smart_audio(text, start_time, end_time, i)
             audio_clips.append(clip)
 
-    # Ghép vào video
     video = VideoFileClip(video_path)
     final_audio = CompositeAudioClip(audio_clips)
     
-    # Giữ lại 10% âm thanh gốc để làm tiếng động nền (Ambient sound)
-    # Hoặc video.audio.volumex(0.1)
     final_video = video.with_audio(final_audio)
     final_video.write_videofile(output_path, codec="libx264", audio_codec="aac")
 
@@ -151,11 +148,7 @@ def merge_audio_to_video(video_path, audio_clips, output_path):
     print("--- Đang trộn âm thanh và xuất video... ---")
     video = VideoFileClip(video_path)
     
-    # Trộn các đoạn audio lại với nhau
     final_audio = CompositeAudioClip(audio_clips)
-    
-    # Giảm âm lượng video gốc xuống (hoặc tắt hẳn bằng cách không dùng video.audio)
-    # Ở đây tôi sẽ tắt hẳn âm thanh gốc để nghe rõ giọng lồng tiếng
     final_video = video.with_audio(final_audio)
     
     final_video.write_videofile(output_path, codec="libx264", audio_codec="aac")
@@ -182,7 +175,7 @@ async def create_dubbed_video_endpoint(name: str = None):
         output_video = f"/home/shared/export/{name}_dubbed.mp4"
         
         audio_clips = await generate_audio_segments(srt_path)
-        merge_audio_to_video(f"/home/shared/import/{name}.mp4", audio_clips, output_video)
+        merge_audio_to_video(f"/home/shared/downloads/{name}.mp4", audio_clips, output_video)
         
         return {"status":200, "message": "Dubbed video created successfully", "video_path": output_video}
     except Exception as e:
