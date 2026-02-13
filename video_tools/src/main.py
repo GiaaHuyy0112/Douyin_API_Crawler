@@ -5,6 +5,7 @@ from pathlib import Path
 
 from src.config import settings
 from src.api.routes import router
+from src.dashboard.routes import dashboard_router
 from src.utils.logging_config import setup_logging
 
 @asynccontextmanager
@@ -40,6 +41,7 @@ app.add_middleware(
 )
 
 app.include_router(router)
+app.include_router(dashboard_router)
 
 if __name__ == "__main__":
     import uvicorn

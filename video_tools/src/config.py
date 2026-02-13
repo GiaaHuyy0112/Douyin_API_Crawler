@@ -8,13 +8,14 @@ class Settings(BaseSettings):
     whisper_model_size: str = Field("base", env="WHISPER_MODEL_SIZE")
     tts_voice: str = Field("vi-VN-HoaiMyNeural", env="TTS_VOICE")
     tts_rate: str = Field("+0%", env="TTS_RATE")  # mặc định, sẽ điều chỉnh động
-    max_speed_increase_percent: int = Field(50, env="MAX_SPEED_INCREASE_PERCENT")
+    max_speed_increase_percent: int = Field(100, env="MAX_SPEED_INCREASE_PERCENT")
+    tts_est_sec_per_char: float = Field(0.18, env="TTS_EST_SEC_PER_CHAR")
     
     # Thư mục làm việc
     downloads_dir: Path = Field(Path("/home/shared/downloads"), env="DOWNLOADS_DIR")
     srt_dir: Path = Field(Path("/home/shared/srt"), env="SRT_DIR")
     export_dir: Path = Field(Path("/home/shared/export"), env="EXPORT_DIR")
-    temp_dir: Path = Field(Path("/tmp/dubbing_app"), env="TEMP_DIR")
+    temp_dir: Path = Field(Path("/home/shared/temp"), env="TEMP_DIR")
     
     # FastAPI
     api_host: str = Field("0.0.0.0", env="API_HOST")
